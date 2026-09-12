@@ -1,9 +1,18 @@
-# BetterKnob
+# betterknob
 
-a script that adds skipping and previous-track actions to your keyboard knobs on windows. i built this because i was sick of opening spotify all the time playing black ops 3
+a script that adds skipping and previous-track actions to your keyboard knobs on windows. i built this because i was sick of opening spotify constantly to change the song while playing black ops 3
+
+## demonstration
+
+<img width="428" height="240" alt="202609122347" src="https://github.com/user-attachments/assets/df250a77-8935-41bd-b435-7a4a31b8cb9f" />
+<br>
+<img width="546" height="272" alt="image" src="https://github.com/user-attachments/assets/b3fc4f7c-88f1-4a31-a420-ad6be428f100" />
+
+look at the tool running in the taskbar
+
 
 ## usage
-1. launch **betterknob.exe**.
+1. launch betterknob.exe
 2. play music on your media player of choice (spotify, apple music, hell even vlc or windows media player)
 3. press the knob once to play/pause, twice to skip, or three times for previous track (or restart the current song)
 
