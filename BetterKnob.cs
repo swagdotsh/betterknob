@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 [assembly: System.Reflection.AssemblyTitle("betterknob")]
 [assembly: System.Reflection.AssemblyProduct("betterknob")]
@@ -95,6 +96,27 @@ sealed class BetterKnobContext : ApplicationContext
             speed.DropDownItems.Add(item);
         }
         menu.Items.Add(speed);
+        var startup = new ToolStripMenuItem("Open on startup");
+        menu.Items.Add(startup);
+        menu.Opening += delegate {
+            try {
+                startup.Checked = Startup.IsEnabled();
+                startup.Enabled = true;
+                startup.ToolTipText = "Launch betterknob when you sign into Windows";
+            } catch (Exception e) {
+                startup.Enabled = false;
+                startup.ToolTipText = "Cannot read startup setting: " + e.Message;
+            }
+        };
+        startup.Click += delegate {
+            try {
+                Startup.SetEnabled(!Startup.IsEnabled());
+                startup.Checked = Startup.IsEnabled();
+            } catch (Exception e) {
+                MessageBox.Show("Could not change the startup setting.\n\n" + e.Message,
+                    "betterknob", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        };
         menu.Items.Add("Exit", null, delegate { ExitThread(); });
         tray = new NotifyIcon { Icon = SystemIcons.Application, Text = "betterknob: 1 play / 2 next / 3 previous", ContextMenuStrip = menu, Visible = true };
         timer = new System.Windows.Forms.Timer { Interval = 15 };
@@ -141,6 +163,30 @@ sealed class BetterKnobContext : ApplicationContext
         if (hook != IntPtr.Zero) { Native.UnhookWindowsHookEx(hook); hook = IntPtr.Zero; }
         if (disposing) { if (timer != null) timer.Dispose(); if (commandWindow != null) commandWindow.DestroyHandle(); if (tray != null) { tray.Visible = false; tray.Dispose(); } if (menu != null) menu.Dispose(); }
         base.Dispose(disposing);
+    }
+}
+
+static class Startup
+{
+    const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+    const string ValueName = "betterknob";
+    public static bool IsEnabled()
+    {
+        using (var key = Registry.CurrentUser.OpenSubKey(RunKey)) {
+            return key != null && String.Equals(key.GetValue(ValueName) as string,
+                Command, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+    static string Command { get { return "\"" + Application.ExecutablePath + "\""; } }
+    public static void SetEnabled(bool enabled)
+    {
+        if (enabled) {
+            using (var key = Registry.CurrentUser.CreateSubKey(RunKey))
+                key.SetValue(ValueName, Command, RegistryValueKind.String);
+        } else {
+            using (var key = Registry.CurrentUser.OpenSubKey(RunKey, true))
+                if (key != null) key.DeleteValue(ValueName, false);
+        }
     }
 }
 

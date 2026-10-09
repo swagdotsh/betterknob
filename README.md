@@ -18,6 +18,12 @@ look at the tool running in the taskbar
 
 this should normally be universal across keyboards that have a play/pause button/knob as they all map to the same media key.
 
+## open on startup
+
+right-click the betterknob tray icon (check the hidden icons arrow) and tick **Open on startup**. it will launch when you sign into Windows. untick it to stop launching automatically; exiting the app does not disable startup.
+
+this setting is saved for your Windows account and needs no admin rights. it starts disabled until you enable it. keep the exe in its current location; if you move it, launch it from the new location and enable the option again. if you disable betterknob in Windows Startup Apps, re-enable it there too.
+
 ## build instructions
 
 1. before starting ensure it's not already running. no extra frameworks or dependencies are needed, it uses the .NET Framework C# compiler already pre-installed on windows (normally)
